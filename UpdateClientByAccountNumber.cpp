@@ -121,25 +121,17 @@ bool MarkClientForDeletionByAccountNumber(vector<stClientData>& vClients, string
     return false;
 }
 
-bool UpdateClients(vector<stClientData>& vClients, stClientData& Client)
+stClientData UpdateClient(string AccountNumber)
 {
-    for (stClientData& C : vClients)
-    {
-        if (C.AccountNumber == Client.AccountNumber)
-        {
-            C = Client;
-            return true;
-        }
-    }
-    return false;
-}
+    stClientData Client;
 
-void UpdateClient(stClientData& Client)
-{
+    Client.AccountNumber = AccountNumber;
     Client.PinCode       = MyInput::ReadString("Enter PinCode? ");
     Client.Name          = MyInput::ReadString("Enter Name? ");
     Client.PhoneNumber   = MyInput::ReadString("Enter Phone Number? ");
     Client.AccountBalance = MyInput::ReadPositiveNumber("Enter AccountBalance? ", "Wrong Input, Please try Again? ");
+
+    return Client;
 }
 
 bool UpdateClientByAccountNumber(vector<stClientData>& vClients, string AccountNumber)
@@ -156,8 +148,14 @@ bool UpdateClientByAccountNumber(vector<stClientData>& vClients, string AccountN
         
         if (Answer == 'y' || Answer == 'Y')
         {
-            UpdateClient(Client);
-            UpdateClients(vClients, Client);
+            for (stClientData& C : vClients)
+            {
+                if (C.AccountNumber == Client.AccountNumber)
+                {
+                    C = UpdateClient(C.AccountNumber);
+                    break;
+                }
+            }
             
             SaveClientsToFile(vClients, "Clients.txt");
 
